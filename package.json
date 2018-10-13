@@ -2,7 +2,7 @@
   "name": "my-react",
   "version": "0.1.0",
   "private": true,
-  "main" : "public/main.js",
+  "main": "public/main.js",
   "dependencies": {
     "google-map-react": "^1.0.9",
     "react": "^16.5.2",
@@ -10,14 +10,18 @@
     "react-scripts": "2.0.4"
   },
   "devDependencies": {
-    "electron": "^3.0.4"
+    "concurrently": "^4.0.1",
+    "electron": "^3.0.4",
+    "electron-builder": "^20.28.4",
+    "wait-on": "^3.1.0"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject", 
-    "electron-start" : "electron ."
+    "eject": "react-scripts eject",
+    "electron-start": "electron .",
+    "electron-dev": "concurrently \"BROWSER=none yarn start\" \"wait-on http://localhost:3000 && electron .\""
   },
   "eslintConfig": {
     "extends": "react-app"
