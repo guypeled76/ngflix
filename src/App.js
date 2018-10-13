@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Panel from './Panel';
 import logo from './logo.svg';
 import './App.css';
 
@@ -9,8 +10,9 @@ class App extends Component {
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
           <p>
-            Edit <code>src/App.js</code> and save to reload.
+            Edit <code>src/App.js</code> and save to reload (1).
           </p>
+          <Panel>Test</Panel>
           <a
             className="App-link"
             href="https://reactjs.org"
