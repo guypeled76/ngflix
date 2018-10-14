@@ -17,15 +17,6 @@ export default class Preferences extends React.Component {
     constructor(props) {
         super(props);
 
-        this.show = this.show.bind(this);
-        this.close = this.close.bind(this);
-        this.save = this.save.bind(this);
-        this.ngEMailChange = this.ngEMailChange.bind(this);
-        this.ngPasswordChange = this.ngPasswordChange.bind(this);
-        this.userEMailChange = this.userEMailChange.bind(this);
-        this.userPasswordChange = this.userPasswordChange.bind(this);
-        this.notificationEMailChange = this.notificationEMailChange.bind(this);
-
         this.state = {
             show: false,
             ngEMail: '',
@@ -41,7 +32,7 @@ export default class Preferences extends React.Component {
      * Show the preferences dialog
      * @param {object} preferences 
      */
-    show(preferences) {
+    show = (preferences) => {
         this.setState({
             show: true,
             ngEMail: preferences.ngEMail,
@@ -55,14 +46,14 @@ export default class Preferences extends React.Component {
     /**    
      * Close the preferences dialog
      */
-    close() {
+    close = () => {
         this.setState({show:false});
     }
 
     /**
      * Save the preferences
      */
-    save() {
+    save = () => {
 
         /*ipcRenderer.send('save:preferences', {
             ngEMail: this.state.ngEMail,
@@ -74,23 +65,23 @@ export default class Preferences extends React.Component {
         this.setState({show:false});
     }
 
-    ngPasswordChange(e) {
+    ngPasswordChange = (e) => {
         this.setState({ngPassword:e.target.value});
     }
 
-    ngEMailChange(e) {
+    ngEMailChange = (e) => {
         this.setState({ngEMail:e.target.value});
     }
 
-    userEMailChange(e) {
+    userEMailChange = (e) => {
         this.setState({userEMail:e.target.value});
     }
 
-    userPasswordChange(e) {
+    userPasswordChange = (e) => {
         this.setState({userPassword:e.target.value});
     }
 
-    notificationEMailChange(e) {
+    notificationEMailChange = (e) => {
         this.setState({notificationEMail:e.target.value});
     }
 
@@ -103,7 +94,7 @@ export default class Preferences extends React.Component {
                 <Form horizontal>
                     <Panel>
                         <Panel.Heading>NG Notifier</Panel.Heading>
-                        <Panel.Body><FormGroup controlId="formHorizontalEmail">
+                        <Panel.Body><FormGroup controlId="ngEMail">
                             <Col componentClass={ControlLabel} sm={2}>
                                 Email
                             </Col>
@@ -112,7 +103,7 @@ export default class Preferences extends React.Component {
                             </Col>
                         </FormGroup>
 
-                            <FormGroup controlId="formHorizontalPassword">
+                            <FormGroup controlId="ngPassword">
                                 <Col componentClass={ControlLabel} sm={2}>
                                     Password
                             </Col>
@@ -124,7 +115,7 @@ export default class Preferences extends React.Component {
 
                     <Panel>
                         <Panel.Heading>User</Panel.Heading>
-                        <Panel.Body><FormGroup controlId="formHorizontalEmail">
+                        <Panel.Body><FormGroup controlId="userEMail">
                             <Col componentClass={ControlLabel} sm={2}>
                                 Email
                             </Col>
@@ -133,7 +124,7 @@ export default class Preferences extends React.Component {
                             </Col>
                         </FormGroup>
 
-                            <FormGroup controlId="formHorizontalPassword">
+                            <FormGroup controlId="userPassword">
                                 <Col componentClass={ControlLabel} sm={2}>
                                     Password
                                 </Col>
@@ -146,7 +137,7 @@ export default class Preferences extends React.Component {
                     <Panel>
                         <Panel.Heading>Notifications</Panel.Heading>
                         <Panel.Body>
-                            <FormGroup controlId="formHorizontalEmail">
+                            <FormGroup controlId="notificationEMail">
                                 <Col componentClass={ControlLabel} sm={2}>
                                     Email
                                 </Col>
