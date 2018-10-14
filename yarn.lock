@@ -8349,6 +8349,13 @@ react-dom@^16.5.2:
     prop-types "^15.6.2"
     schedule "^0.5.0"
 
+react-electron-web-view@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/react-electron-web-view/-/react-electron-web-view-2.0.1.tgz#984b7bbbeb77e35bcca921dc50120fc8f2b0f27d"
+  integrity sha1-mEt7u+t341vMqSHcUBIPyPKw8n0=
+  dependencies:
+    lodash.camelcase "^4.3.0"
+
 react-error-overlay@^5.0.4:
   version "5.0.4"
   resolved "https://registry.yarnpkg.com/react-error-overlay/-/react-error-overlay-5.0.4.tgz#39cf184d770f98b65a2ee59a779d03b8d092b69e"
