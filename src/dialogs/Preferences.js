@@ -9,8 +9,9 @@ import {
     ControlLabel,
     Panel
 } from 'react-bootstrap'
-//import { ipcRenderer } from 'electron';
 
+const { ipcRenderer } = window.require('electron');
+ 
 
 export default class Preferences extends React.Component {
 
@@ -26,6 +27,12 @@ export default class Preferences extends React.Component {
             notificationEMail: ''
         };
 
+    }
+
+    componentDidMount() {
+        ipcRenderer.on("edit:preferences", (e, preferences) => {
+            this.show(preferences);
+        });
     }
 
     /**
@@ -47,7 +54,7 @@ export default class Preferences extends React.Component {
      * Close the preferences dialog
      */
     close = () => {
-        this.setState({show:false});
+        this.setState({ show: false });
     }
 
     /**
@@ -55,34 +62,34 @@ export default class Preferences extends React.Component {
      */
     save = () => {
 
-        /*ipcRenderer.send('save:preferences', {
+        ipcRenderer.send('save:preferences', {
             ngEMail: this.state.ngEMail,
             ngPassword: this.state.ngPassword,
             userEMail: this.state.userEMail,
             userPassword: this.state.userPassword,
             notificationEMail: this.state.notificationEMail
-        });*/
-        this.setState({show:false});
+        });
+        this.setState({ show: false });
     }
 
     ngPasswordChange = (e) => {
-        this.setState({ngPassword:e.target.value});
+        this.setState({ ngPassword: e.target.value });
     }
 
     ngEMailChange = (e) => {
-        this.setState({ngEMail:e.target.value});
+        this.setState({ ngEMail: e.target.value });
     }
 
     userEMailChange = (e) => {
-        this.setState({userEMail:e.target.value});
+        this.setState({ userEMail: e.target.value });
     }
 
     userPasswordChange = (e) => {
-        this.setState({userPassword:e.target.value});
+        this.setState({ userPassword: e.target.value });
     }
 
     notificationEMailChange = (e) => {
-        this.setState({notificationEMail:e.target.value});
+        this.setState({ notificationEMail: e.target.value });
     }
 
     render() {
@@ -133,7 +140,7 @@ export default class Preferences extends React.Component {
                                 </Col>
                             </FormGroup></Panel.Body>
                     </Panel>
-                    
+
                     <Panel>
                         <Panel.Heading>Notifications</Panel.Heading>
                         <Panel.Body>

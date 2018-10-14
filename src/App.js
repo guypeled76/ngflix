@@ -1,24 +1,21 @@
 import React, { Component } from 'react';
 import Preferences from './dialogs/Preferences';
+import Status from './dialogs/Status';
+
 import './App.css';
 
 class App extends Component {
 
   constructor(props) {
     super(props);
-    this.myRef = React.createRef();
 
-  }
-
-  editPreferences = () => {
-    this.myRef.current.show({});
   }
 
   render() {
     return (
       <div className="App">
-        <button onClick={this.editPreferences}>Show</button>
-        <Preferences ref={this.myRef}></Preferences>
+        <Preferences></Preferences>
+        <Status></Status>
       </div>
     );
   }
