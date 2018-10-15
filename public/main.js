@@ -43,7 +43,7 @@ function createWindow() {
   });
 
   // Check every 10 seconds if there is a task
-  checkHandle = setInterval(probeNetflix, 10000);
+  checkForTasks();
 
 
 }
@@ -113,6 +113,11 @@ Menu.setApplicationMenu(
   ]
   ));
 
+function checkForTasks() {
+  clearTimeout(checkHandle);
+  checkHandle = setTimeout(probeNetflix, 10000);
+} 
+
 /**
  * Probe the netflix site
  */
@@ -178,6 +183,8 @@ ipcMain.on("found:getTask", function (e, item) {
       setStatusBar("Failed to send mail! [reason=preferences]");
     }
 
+  } else {
+    checkForTasks();
   }
 });
 
@@ -204,4 +211,6 @@ function setStatusBar(text) {
     mainWindow.webContents.send("set:statusBar", text);
   }
 }
+
+
 

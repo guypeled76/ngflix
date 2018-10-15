@@ -7,7 +7,6 @@ import {
     Col,
     FormControl,
     ControlLabel,
-    Panel,
     Tab,
     Tabs
 } from 'react-bootstrap'
