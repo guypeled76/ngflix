@@ -30,6 +30,6 @@ export default class Status extends React.Component {
     }
 
     render() {
-        return (<div id="snackbar" ref={this.myRef}>Some text some message..</div>);
+        return (<div id="snackbar" ref={this.myRef}>...</div>);
     }
 }
