@@ -11,13 +11,11 @@ const nodemailer = require('nodemailer');
  */
 function sendMail(ngMail, ngMailPassword, to, subject, body) {
     var transporter = nodemailer.createTransport({
-        service: 'gmail',
+        host: "smtp.gmail.com",
         auth: {
+            type: "login",
             user: ngMail,
             pass: ngMailPassword
-        },
-        tls: {
-            rejectUnauthorized: false
         }
     });
 

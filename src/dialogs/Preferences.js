@@ -42,14 +42,7 @@ export default class Preferences extends React.Component {
      * @param {object} preferences 
      */
     show = (preferences) => {
-        this.setState({
-            show: true,
-            ngEMail: preferences.ngEMail,
-            ngPassword: preferences.ngPassword,
-            userEMail: preferences.userEMail,
-            userPassword: preferences.userPassword,
-            notificationEMail: preferences.notificationEMail
-        });
+        this.setState(Object.assign({},{show:true}, preferences));
     }
 
     /**    

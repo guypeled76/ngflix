@@ -42,10 +42,6 @@ function createWindow() {
     store.set('windowBounds', { width, height });
   });
 
-  // Check every 10 seconds if there is a task
-  checkForTasks();
-
-
 }
 
 // This method will be called when Electron has finished
@@ -80,6 +76,29 @@ Menu.setApplicationMenu(
       ]
     },
     {
+      label: 'Actions',
+      submenu: [
+        {
+          label: 'Start',
+          click() {
+            startMonitoring();
+          }
+        },
+        {
+          label: 'Stop',
+          click() {
+            stopMonitoring();
+          }
+        },
+        {
+          label: 'Logon',
+          click() {
+            logonNetflix();
+          }
+        }
+      ]
+    },
+    {
       label: 'View',
       submenu: [
         { role: 'reload' },
@@ -87,12 +106,6 @@ Menu.setApplicationMenu(
           label: 'Preferences',
           click() {
             editPreferences();
-          }
-        },
-        {
-          label: 'Logon',
-          click() {
-            logonNetflix();
           }
         },
         {role: 'toggledevtools'},
@@ -113,10 +126,7 @@ Menu.setApplicationMenu(
   ]
   ));
 
-function checkForTasks() {
-  clearTimeout(checkHandle);
-  checkHandle = setTimeout(probeNetflix, 10000);
-} 
+
 
 /**
  * Probe the netflix site
@@ -134,6 +144,23 @@ function logonNetflix() {
   if (mainWindow) {
     mainWindow.webContents.send("logon:netflix", store.get('preferences'));
   }
+}
+
+/**
+ * Start task monitoring
+ */
+function startMonitoring(){
+  clearTimeout(checkHandle);
+  checkHandle = setTimeout(probeNetflix, 10000);
+  setStatusBar("Started task monitoring.");
+}
+
+/**
+ * Stop task monitoring
+ */
+function stopMonitoring(){
+  clearTimeout(checkHandle);
+  setStatusBar("Stopped task monitoring.");
 }
 
 /**
@@ -166,6 +193,7 @@ function editPreferences() {
 }
 
 
+
 // Handle the found task message
 ipcMain.on("found:getTask", function (e, item) {
   if (item) {
@@ -173,18 +201,28 @@ ipcMain.on("found:getTask", function (e, item) {
     // Get preferences
     let preferences = store.get('preferences');
     if (preferences) {
-      sendMail(preferences.ngEMail, preferences.ngEMailPassword, preferences.notificationEMail, "Found task!", "Found task!").then(() => {
+        sendMail(preferences.ngEMail, preferences.ngEMailPassword, preferences.notificationEMail, "Found task!", "Found task!").then(() => {
         clearInterval(checkHandle);
-        setStatusBar("Mail Sent!");
+        showMessage("Success", "Mail Sent!", [
+          {text:'Resend', action:"found:getTask", args:item},
+          {text:'Close'}
+        ]);
       }).catch((reason) => {
-        setStatusBar("Failed to send mail! [reason='" + reason + "']");
+        showMessage("Failure","Failed to send mail! [reason='" + reason + "']", [
+          {text:'Retry', action:"found:getTask", args:item},
+          {text:'Close'}
+        ]);
       });
     } else {
-      setStatusBar("Failed to send mail! [reason=preferences]");
+      showMessage("Failure","Failed to send mail! [reason=preferences]", [
+        {text:'Retry', action:"found:getTask", args:item},
+        {text:'Close'}
+      ]);
     }
 
   } else {
-    checkForTasks();
+    setStatusBar("Get task was not found.")
+    startMonitoring();
   }
 });
 
@@ -209,6 +247,18 @@ ipcMain.on('save:preferences', function (e, preferences) {
 function setStatusBar(text) {
   if (mainWindow) {
     mainWindow.webContents.send("set:statusBar", text);
+  }
+}
+
+/**
+ * Show a message dialog
+ * @param {string} title 
+ * @param {string} message 
+ * @param {array} buttons
+ */
+function showMessage(title, message, buttons) {
+  if (mainWindow) {
+    mainWindow.webContents.send("show:message", {title:title, message:message, buttons:buttons});
   }
 }
 

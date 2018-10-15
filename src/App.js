@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import WebView from 'react-electron-web-view'
 import Preferences from './dialogs/Preferences';
 import Status from './dialogs/Status';
+import Message from './dialogs/Message';
 
 import './App.css';
 
@@ -76,6 +77,7 @@ class App extends Component {
         <WebView style={style} ref={this.myRef} className="webview" src="https://originator.backlot.netflix.com" nodeintegration>
         </WebView>
         <Preferences></Preferences>
+        <Message></Message>
         <Status></Status>
       </div>
     );
