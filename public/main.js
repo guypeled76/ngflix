@@ -28,7 +28,7 @@ function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({ width: width, height: height })
   mainWindow.title = 'NG Netflix Monitor';
-  
+
   // and load the app.
   mainWindow.loadURL('http://localhost:3000');
 
@@ -64,6 +64,13 @@ app.on('activate', () => {
   }
 })
 
+let monitorMode = 'mail_task';
+
+// Handle the preferences editing
+handleWindowMessage('enable:monitor', function (mode) {
+  monitorMode = mode;
+  enableMonitoring();
+});
 
 
 // Handle the found task message
@@ -73,18 +80,30 @@ handleWindowMessage("found:getTask", function (item) {
     // Get preferences
     let preferences = store.get('preferences');
     if (preferences) {
-      sendMail(preferences.ngEMail, preferences.ngEMailPassword, preferences.notificationEMail, "Found task!", "Found task!").then(() => {
-        clearInterval(checkHandle);
-        showMessage("Success", "Mail Sent!", [
-          { text: 'Resend', action: "found:getTask", args: item },
-          { text: 'Close' }
-        ]);
-      }).catch((reason) => {
-        showMessage("Failure", "Failed to send mail! [reason='" + reason + "']", [
-          { text: 'Retry', action: "found:getTask", args: item },
-          { text: 'Close' }
-        ]);
-      });
+
+      clearInterval(checkHandle);
+
+      switch (monitorMode) {
+        case 'get_task':
+          showMessage("Success", "Get task!", [
+            { text: 'Close' }
+          ]);
+          break;
+        case 'mail_task':
+          sendMail(preferences.ngEMail, preferences.ngEMailPassword, preferences.notificationEMail, "Found task!", "Found task!").then(() => {
+            showMessage("Success", "Mail Sent!", [
+              { text: 'Resend', action: "found:getTask", args: item },
+              { text: 'Close' }
+            ]);
+          }).catch((reason) => {
+            showMessage("Failure", "Failed to send mail! [reason='" + reason + "']", [
+              { text: 'Retry', action: "found:getTask", args: item },
+              { text: 'Close' }
+            ]);
+          });
+          break;
+      }
+
     } else {
       showMessage("Failure", "Failed to send mail! [reason=preferences]", [
         { text: 'Retry', action: "found:getTask", args: item },
@@ -125,7 +144,7 @@ Menu.setApplicationMenu(
             editPreferences();
           }
         },
-        {type: 'separator'},
+        { type: 'separator' },
         { label: 'Exit', role: 'close' }
       ]
     },
@@ -144,7 +163,7 @@ Menu.setApplicationMenu(
             stopMonitoring();
           }
         },
-        {type: 'separator'},
+        { type: 'separator' },
         {
           label: 'Logon',
           click() {
@@ -202,6 +221,14 @@ function showAbout() {
  * Start task monitoring
  */
 function startMonitoring() {
+  showMessage("Monitoring", "Select action to take if task is found...", [
+    { text: 'Get task', action: "enable:monitor", args: 'get_task' },
+    { text: 'Send Mail', action: "enable:monitor", args: 'mail_task' },
+    { text: 'Cancel' }
+  ]);
+}
+
+function enableMonitoring() {
   clearTimeout(checkHandle);
   checkHandle = setTimeout(probeNetflix, 10000);
   setStatusBar("Started task monitoring.");
@@ -269,7 +296,7 @@ function showMessage(title, message, buttons) {
  * @param {string} channel 
  * @param {object} args 
  */
-function sendWindowMessage(channel, args){
+function sendWindowMessage(channel, args) {
   if (mainWindow) {
     mainWindow.webContents.send(channel, args);
   }
@@ -281,7 +308,7 @@ function sendWindowMessage(channel, args){
  * @param {method} handler 
  */
 function handleWindowMessage(channel, handler) {
-  if(handler) {
+  if (handler) {
     ipcMain.on(channel, function (e, args) {
       handler(args);
     });
