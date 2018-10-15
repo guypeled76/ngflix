@@ -7,11 +7,14 @@ import {
     Col,
     FormControl,
     ControlLabel,
-    Panel
+    Panel,
+    Tab,
+    Tabs
 } from 'react-bootstrap'
 
 const { ipcRenderer } = window.require('electron');
- 
+
+const tabStyle =  {paddingTop:'10px'};
 
 export default class Preferences extends React.Component {
 
@@ -93,22 +96,24 @@ export default class Preferences extends React.Component {
     }
 
     render() {
+
+        
         return (<Modal show={this.state.show} onHide={this.close}>
             <Modal.Header closeButton>
                 <Modal.Title>Preferences</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Form horizontal>
-                    <Panel>
-                        <Panel.Heading>NG Notifier</Panel.Heading>
-                        <Panel.Body><FormGroup controlId="ngEMail">
-                            <Col componentClass={ControlLabel} sm={2}>
-                                Email
-                            </Col>
-                            <Col sm={10}>
-                                <FormControl type="email" placeholder="Email" value={this.state.ngEMail} onChange={this.ngEMailChange} />
-                            </Col>
-                        </FormGroup>
+                    <Tabs defaultActiveKey={1}  id="preferences-tabs">
+                        <Tab eventKey={1}  title="NG Notifier" style={tabStyle}>
+                            <FormGroup controlId="ngEMail">
+                                <Col componentClass={ControlLabel} sm={2}>
+                                    Email
+                                </Col>
+                                <Col sm={10}>
+                                    <FormControl type="email" placeholder="Email" value={this.state.ngEMail} onChange={this.ngEMailChange} />
+                                </Col>
+                            </FormGroup>
 
                             <FormGroup controlId="ngPassword">
                                 <Col componentClass={ControlLabel} sm={2}>
@@ -117,19 +122,17 @@ export default class Preferences extends React.Component {
                                 <Col sm={10}>
                                     <FormControl type="password" placeholder="Password" value={this.state.ngPassword} onChange={this.ngPasswordChange} />
                                 </Col>
-                            </FormGroup></Panel.Body>
-                    </Panel>
-
-                    <Panel>
-                        <Panel.Heading>User</Panel.Heading>
-                        <Panel.Body><FormGroup controlId="userEMail">
-                            <Col componentClass={ControlLabel} sm={2}>
-                                Email
-                            </Col>
-                            <Col sm={10}>
-                                <FormControl type="email" placeholder="Email" value={this.state.userEMail} onChange={this.userEMailChange} />
-                            </Col>
-                        </FormGroup>
+                            </FormGroup>
+                        </Tab>
+                        <Tab eventKey={2} title="User" style={tabStyle}>
+                            <FormGroup controlId="userEMail">
+                                <Col componentClass={ControlLabel} sm={2}>
+                                    Email
+                                </Col>
+                                <Col sm={10}>
+                                    <FormControl type="email" placeholder="Email" value={this.state.userEMail} onChange={this.userEMailChange} />
+                                </Col>
+                            </FormGroup>
 
                             <FormGroup controlId="userPassword">
                                 <Col componentClass={ControlLabel} sm={2}>
@@ -138,12 +141,9 @@ export default class Preferences extends React.Component {
                                 <Col sm={10}>
                                     <FormControl type="password" placeholder="Password" value={this.state.userPassword} onChange={this.userPasswordChange} />
                                 </Col>
-                            </FormGroup></Panel.Body>
-                    </Panel>
-
-                    <Panel>
-                        <Panel.Heading>Notifications</Panel.Heading>
-                        <Panel.Body>
+                            </FormGroup>
+                        </Tab>
+                        <Tab eventKey={3} title="Notifications" style={tabStyle}>
                             <FormGroup controlId="notificationEMail">
                                 <Col componentClass={ControlLabel} sm={2}>
                                     Email
@@ -152,9 +152,8 @@ export default class Preferences extends React.Component {
                                     <FormControl type="email" placeholder="Email" value={this.state.notificationEMail} onChange={this.notificationEMailChange} />
                                 </Col>
                             </FormGroup>
-                        </Panel.Body>
-                    </Panel>
-
+                        </Tab>
+                    </Tabs>
                 </Form>
 
             </Modal.Body>

@@ -31,9 +31,6 @@ function createWindow() {
   // and load the app.
   mainWindow.loadURL('http://localhost:3000');
 
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools()
-
   // Emitted when the window is closed.
   mainWindow.on('closed', () => {
     mainWindow = null
@@ -97,7 +94,8 @@ Menu.setApplicationMenu(
           click() {
             logonNetflix();
           }
-        }
+        },
+        {role: 'toggledevtools'},
       ]
     },
 
