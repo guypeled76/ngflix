@@ -5,7 +5,6 @@
   "main": "public/main.js",
   "homepage": "./",
   "dependencies": {
-    "electron": "^3.0.4",
     "electron-is-dev": "^1.0.1",
     "nodemailer": "^4.6.8",
     "react": "^16.5.2",
