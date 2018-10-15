@@ -27,7 +27,8 @@ function createWindow() {
 
   // Create the browser window.
   mainWindow = new BrowserWindow({ width: width, height: height })
-
+  mainWindow.title = 'NG Netflix Monitor';
+  
   // and load the app.
   mainWindow.loadURL('http://localhost:3000');
 
@@ -72,6 +73,13 @@ Menu.setApplicationMenu(
     {
       label: 'File',
       submenu: [
+        {
+          label: 'Preferences',
+          click() {
+            editPreferences();
+          }
+        },
+        {type: 'separator'},
         { label: 'Exit', role: 'close' }
       ]
     },
@@ -102,13 +110,7 @@ Menu.setApplicationMenu(
       label: 'View',
       submenu: [
         { role: 'reload' },
-        {
-          label: 'Preferences',
-          click() {
-            editPreferences();
-          }
-        },
-        {role: 'toggledevtools'},
+        { role: 'toggledevtools' },
       ]
     },
 
@@ -116,9 +118,9 @@ Menu.setApplicationMenu(
       role: 'help',
       submenu: [
         {
-          label: 'Learn More',
+          label: 'About',
           click() {
-            editPreferences();
+            showAbout();
           }
         }
       ]
@@ -147,9 +149,16 @@ function logonNetflix() {
 }
 
 /**
+ * Shows the about window
+ */
+function showAbout() {
+  showMessage("About", "temp");
+}
+
+/**
  * Start task monitoring
  */
-function startMonitoring(){
+function startMonitoring() {
   clearTimeout(checkHandle);
   checkHandle = setTimeout(probeNetflix, 10000);
   setStatusBar("Started task monitoring.");
@@ -158,7 +167,7 @@ function startMonitoring(){
 /**
  * Stop task monitoring
  */
-function stopMonitoring(){
+function stopMonitoring() {
   clearTimeout(checkHandle);
   setStatusBar("Stopped task monitoring.");
 }
@@ -201,22 +210,22 @@ ipcMain.on("found:getTask", function (e, item) {
     // Get preferences
     let preferences = store.get('preferences');
     if (preferences) {
-        sendMail(preferences.ngEMail, preferences.ngEMailPassword, preferences.notificationEMail, "Found task!", "Found task!").then(() => {
+      sendMail(preferences.ngEMail, preferences.ngEMailPassword, preferences.notificationEMail, "Found task!", "Found task!").then(() => {
         clearInterval(checkHandle);
         showMessage("Success", "Mail Sent!", [
-          {text:'Resend', action:"found:getTask", args:item},
-          {text:'Close'}
+          { text: 'Resend', action: "found:getTask", args: item },
+          { text: 'Close' }
         ]);
       }).catch((reason) => {
-        showMessage("Failure","Failed to send mail! [reason='" + reason + "']", [
-          {text:'Retry', action:"found:getTask", args:item},
-          {text:'Close'}
+        showMessage("Failure", "Failed to send mail! [reason='" + reason + "']", [
+          { text: 'Retry', action: "found:getTask", args: item },
+          { text: 'Close' }
         ]);
       });
     } else {
-      showMessage("Failure","Failed to send mail! [reason=preferences]", [
-        {text:'Retry', action:"found:getTask", args:item},
-        {text:'Close'}
+      showMessage("Failure", "Failed to send mail! [reason=preferences]", [
+        { text: 'Retry', action: "found:getTask", args: item },
+        { text: 'Close' }
       ]);
     }
 
@@ -228,7 +237,7 @@ ipcMain.on("found:getTask", function (e, item) {
 
 // Handle the preferences editing
 ipcMain.on('save:preferences', function (e, preferences) {
-  
+
   store.set('preferences', {
     ngEMail: preferences.ngEMail,
     ngPassword: preferences.ngPassword,
@@ -258,7 +267,7 @@ function setStatusBar(text) {
  */
 function showMessage(title, message, buttons) {
   if (mainWindow) {
-    mainWindow.webContents.send("show:message", {title:title, message:message, buttons:buttons});
+    mainWindow.webContents.send("show:message", { title: title, message: message, buttons: buttons });
   }
 }
 

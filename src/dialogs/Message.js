@@ -36,7 +36,7 @@ export default class Message extends React.Component {
             show:true,
             title:title,
             message:message,
-            buttons : buttons ? buttons : {text:'Close'}
+            buttons : buttons ? buttons : [{text:'Close'}]
         });
     }
 
