@@ -11,7 +11,9 @@ const nodemailer = require('nodemailer');
  */
 function sendMail(ngMail, ngMailPassword, to, subject, body) {
     var transporter = nodemailer.createTransport({
-        host: "smtp.gmail.com",
+        host: 'smtp.gmail.com',
+        port: 465,
+        secure: true, 
         auth: {
             type: "login",
             user: ngMail,

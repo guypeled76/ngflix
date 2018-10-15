@@ -66,6 +66,52 @@ app.on('activate', () => {
 
 
 
+// Handle the found task message
+handleWindowMessage("found:getTask", function (item) {
+  if (item) {
+
+    // Get preferences
+    let preferences = store.get('preferences');
+    if (preferences) {
+      sendMail(preferences.ngEMail, preferences.ngEMailPassword, preferences.notificationEMail, "Found task!", "Found task!").then(() => {
+        clearInterval(checkHandle);
+        showMessage("Success", "Mail Sent!", [
+          { text: 'Resend', action: "found:getTask", args: item },
+          { text: 'Close' }
+        ]);
+      }).catch((reason) => {
+        showMessage("Failure", "Failed to send mail! [reason='" + reason + "']", [
+          { text: 'Retry', action: "found:getTask", args: item },
+          { text: 'Close' }
+        ]);
+      });
+    } else {
+      showMessage("Failure", "Failed to send mail! [reason=preferences]", [
+        { text: 'Retry', action: "found:getTask", args: item },
+        { text: 'Close' }
+      ]);
+    }
+
+  } else {
+    setStatusBar("Get task was not found.")
+    startMonitoring();
+  }
+});
+
+// Handle the preferences editing
+handleWindowMessage('save:preferences', function (preferences) {
+
+  store.set('preferences', {
+    ngEMail: preferences.ngEMail,
+    ngPassword: preferences.ngPassword,
+    userEMail: preferences.userEMail,
+    userPassword: preferences.userPassword,
+    notificationEMail: preferences.notificationEMail
+  });
+
+  setStatusBar('Preferences Saved');
+});
+
 
 // Create the application menu
 Menu.setApplicationMenu(
@@ -135,18 +181,14 @@ Menu.setApplicationMenu(
  * Probe the netflix site
  */
 function probeNetflix() {
-  if (mainWindow) {
-    mainWindow.webContents.send("probe:netflix");
-  }
+  sendWindowMessage("probe:netflix");
 }
 
 /**
  * Logon to netflix
  */
 function logonNetflix() {
-  if (mainWindow) {
-    mainWindow.webContents.send("logon:netflix", store.get('preferences'));
-  }
+  sendWindowMessage("logon:netflix", store.get('preferences'));
 }
 
 /**
@@ -204,60 +246,12 @@ function editPreferences() {
 
 
 
-// Handle the found task message
-ipcMain.on("found:getTask", function (e, item) {
-  if (item) {
-
-    // Get preferences
-    let preferences = store.get('preferences');
-    if (preferences) {
-      sendMail(preferences.ngEMail, preferences.ngEMailPassword, preferences.notificationEMail, "Found task!", "Found task!").then(() => {
-        clearInterval(checkHandle);
-        showMessage("Success", "Mail Sent!", [
-          { text: 'Resend', action: "found:getTask", args: item },
-          { text: 'Close' }
-        ]);
-      }).catch((reason) => {
-        showMessage("Failure", "Failed to send mail! [reason='" + reason + "']", [
-          { text: 'Retry', action: "found:getTask", args: item },
-          { text: 'Close' }
-        ]);
-      });
-    } else {
-      showMessage("Failure", "Failed to send mail! [reason=preferences]", [
-        { text: 'Retry', action: "found:getTask", args: item },
-        { text: 'Close' }
-      ]);
-    }
-
-  } else {
-    setStatusBar("Get task was not found.")
-    startMonitoring();
-  }
-});
-
-// Handle the preferences editing
-ipcMain.on('save:preferences', function (e, preferences) {
-
-  store.set('preferences', {
-    ngEMail: preferences.ngEMail,
-    ngPassword: preferences.ngPassword,
-    userEMail: preferences.userEMail,
-    userPassword: preferences.userPassword,
-    notificationEMail: preferences.notificationEMail
-  });
-
-  setStatusBar('Preferences Saved');
-});
-
 /**
  * Set the status bar text
  * @param {string} text 
  */
 function setStatusBar(text) {
-  if (mainWindow) {
-    mainWindow.webContents.send("set:statusBar", text);
-  }
+  sendWindowMessage("set:statusBar", text);
 }
 
 /**
@@ -267,8 +261,30 @@ function setStatusBar(text) {
  * @param {array} buttons
  */
 function showMessage(title, message, buttons) {
+  sendWindowMessage("show:message", { title: title, message: message, buttons: buttons });
+}
+
+/**
+ * Sends a message to the main window
+ * @param {string} channel 
+ * @param {object} args 
+ */
+function sendWindowMessage(channel, args){
   if (mainWindow) {
-    mainWindow.webContents.send("show:message", { title: title, message: message, buttons: buttons });
+    mainWindow.webContents.send(channel, args);
+  }
+}
+
+/**
+ * Handles a message sent from the main window
+ * @param {string} channel 
+ * @param {method} handler 
+ */
+function handleWindowMessage(channel, handler) {
+  if(handler) {
+    ipcMain.on(channel, function (e, args) {
+      handler(args);
+    });
   }
 }
 
