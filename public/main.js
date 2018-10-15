@@ -98,6 +98,7 @@ Menu.setApplicationMenu(
             stopMonitoring();
           }
         },
+        {type: 'separator'},
         {
           label: 'Logon',
           click() {

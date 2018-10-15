@@ -54,7 +54,7 @@ export default class Message extends React.Component {
 
 
     render() {
-        return (<Modal show={this.state.show} onHide={this.close}>
+        return (<Modal show={this.state.show} onHide={()=>{this.close()}}>
             <Modal.Header closeButton>
                 <Modal.Title>{this.state.title}</Modal.Title>
             </Modal.Header>
