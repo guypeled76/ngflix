@@ -5,8 +5,17 @@ const Store = require('./store.js');
 const isDev = require('electron-is-dev');
 const path = require('path');
 
+const log = require('electron-log');
+const {autoUpdater} = require("electron-updater");
+
 let mainWindow
 let checkHandle = 0;
+
+// Add logging support
+autoUpdater.logger = log;
+autoUpdater.logger.transports.file.level = 'info';
+log.info('App starting...');
+
 
 // Create the application store
 const store = new Store({
@@ -65,6 +74,32 @@ app.on('activate', () => {
     createWindow()
   }
 })
+
+app.on('ready', function()  {
+  autoUpdater.checkForUpdatesAndNotify();
+});
+
+autoUpdater.on('checking-for-update', () => {
+  setStatusBar('Checking for update...');
+})
+autoUpdater.on('update-available', (info) => {
+  setStatusBar('Update available.');
+})
+autoUpdater.on('update-not-available', (info) => {
+  setStatusBar('Update not available.');
+})
+autoUpdater.on('error', (err) => {
+  showMessage('Error','Error in auto-updater. ' + err);
+})
+autoUpdater.on('download-progress', (progressObj) => {
+  let log_message = "Download speed: " + progressObj.bytesPerSecond;
+  log_message = log_message + ' - Downloaded ' + progressObj.percent + '%';
+  log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')';
+  setStatusBar(log_message);
+})
+autoUpdater.on('update-downloaded', (info) => {
+  autoUpdater.quitAndInstall();  
+});
 
 let monitorMode = 'mail_task';
 
