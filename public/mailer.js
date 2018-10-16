@@ -1,5 +1,6 @@
 
 const nodemailer = require('nodemailer');
+const log = require('electron-log');
 
 /**
  * Sends a mail
@@ -10,12 +11,12 @@ const nodemailer = require('nodemailer');
  * @param {string} body  The mail body
  */
 function sendMail(ngMail, ngMailPassword, to, subject, body) {
+
+    //log.info('sendMail:mail:' + ngMail + ' password:' + ngMailPassword);
+
     var transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        secure: true, 
+        service: 'gmail',
         auth: {
-            type: "login",
             user: ngMail,
             pass: ngMailPassword
         }

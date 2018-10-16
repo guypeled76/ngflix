@@ -46,6 +46,29 @@ class App extends Component {
 
     });
 
+    ipcRenderer.on("gettask:netflix", (e) =>{
+      const webview = this.myRef.current;
+      if (webview) {
+
+        const generateCheckTasks = () => {
+          let code = 'var ele = document.evaluate("//button[contains(text(), \'Get Task\')]", document, null, XPathResult.ANY_TYPE, null ).iterateNext();';
+          code += 'if(ele){';
+          code += 'ele.click();';
+          code += 'Promise.resolve(true);';
+          code += '} else {';
+          code += 'Promise.resolve(false);';
+          code += '}';
+          return code;
+        }
+
+        
+        webview.getWebContents().executeJavaScript(generateCheckTasks()).then((res) => {
+          ipcRenderer.send("gettask:netflixResult", res);
+        });
+      }
+    });
+
+    // Check if there is a valid netflix task
     ipcRenderer.on("probe:netflix", (e) => {
       const webview = this.myRef.current;
       if (webview) {

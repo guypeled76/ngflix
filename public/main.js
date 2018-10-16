@@ -14,7 +14,7 @@ let checkHandle = 0;
 // Add logging support
 autoUpdater.logger = log;
 autoUpdater.logger.transports.file.level = 'info';
-log.info('App starting...');
+
 
 
 // Create the application store
@@ -110,9 +110,21 @@ handleWindowMessage('enable:monitor', function (mode) {
 });
 
 
+handleWindowMessage("gettask:netflixResult" , function (success) {
+  if (success) {
+    showMessage("Success", "Get task was clicked!", [
+      { text: 'Close' }
+    ]);
+  } else {
+    showMessage("Failure", "Failure to get task!", [
+      { text: 'Close' }
+    ]);
+  }
+});
+
 // Handle the found task message
-handleWindowMessage("found:getTask", function (item) {
-  if (item) {
+handleWindowMessage("found:getTask", function (success) {
+  if (success) {
 
     // Get preferences
     let preferences = store.get('preferences');
@@ -122,19 +134,17 @@ handleWindowMessage("found:getTask", function (item) {
 
       switch (monitorMode) {
         case 'get_task':
-          showMessage("Success", "Get task!", [
-            { text: 'Close' }
-          ]);
+          getTaskNetflix();
           break;
         case 'mail_task':
-          sendMail(preferences.ngEMail, preferences.ngEMailPassword, preferences.notificationEMail, "Found task!", "Found task!").then(() => {
+          sendMail(preferences.ngEMail, preferences.ngPassword, preferences.notificationEMail, "A netflix task is available!", "Go get it at https://originator.backlot.netflix.com...").then(() => {
             showMessage("Success", "Mail Sent!", [
-              { text: 'Resend', action: "found:getTask", args: item },
+              { text: 'Resend', action: "found:getTask", args: success },
               { text: 'Close' }
             ]);
           }).catch((reason) => {
             showMessage("Failure", "Failed to send mail! [reason='" + reason + "']", [
-              { text: 'Retry', action: "found:getTask", args: item },
+              { text: 'Retry', action: "found:getTask", args: success },
               { text: 'Close' }
             ]);
           });
@@ -143,7 +153,7 @@ handleWindowMessage("found:getTask", function (item) {
 
     } else {
       showMessage("Failure", "Failed to send mail! [reason=preferences]", [
-        { text: 'Retry', action: "found:getTask", args: item },
+        { text: 'Retry', action: "found:getTask", args: success },
         { text: 'Close' }
       ]);
     }
@@ -231,6 +241,13 @@ Menu.setApplicationMenu(
   ]
   ));
 
+
+  /**
+ * Get the netflix task
+ */
+function getTaskNetflix() {
+  sendWindowMessage("gettask:netflix");
+}
 
 
 /**
