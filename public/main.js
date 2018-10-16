@@ -160,7 +160,7 @@ handleWindowMessage("found:getTask", function (success) {
 
   } else {
     setStatusBar("Get task was not found.")
-    startMonitoring();
+    enableMonitoring();
   }
 });
 

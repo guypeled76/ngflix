@@ -14,6 +14,7 @@ class App extends Component {
     super(props);
     this.myRef = React.createRef();
 
+    this.refreshCounter = 0;
 
   }
 
@@ -31,7 +32,7 @@ class App extends Component {
           return code;
         }
 
-        const generateClick = (name)=> {
+        const generateClick = (name) => {
           let code = 'var ele = document.getElementById("' + name + '");';
           code += 'ele.click();';
           return code;
@@ -41,12 +42,12 @@ class App extends Component {
         webview.executeJavaScript(generateSetValue('password', preferences.userPassword));
         webview.executeJavaScript(generateClick('post-ok'));
 
-        
+
       }
 
     });
 
-    ipcRenderer.on("gettask:netflix", (e) =>{
+    ipcRenderer.on("gettask:netflix", (e) => {
       const webview = this.myRef.current;
       if (webview) {
 
@@ -61,7 +62,7 @@ class App extends Component {
           return code;
         }
 
-        
+
         webview.getWebContents().executeJavaScript(generateCheckTasks()).then((res) => {
           ipcRenderer.send("gettask:netflixResult", res);
         });
@@ -83,9 +84,24 @@ class App extends Component {
           return code;
         }
 
-        
+        const me = this;
         webview.getWebContents().executeJavaScript(generateCheckTasks()).then((res) => {
+
+
           ipcRenderer.send("found:getTask", res);
+
+          // If we didn't find the get task button
+          if (!res) {
+            me.refreshCounter++;
+
+            // If two minutes passed 10s * 12
+            if (me.refreshCounter === 12) {
+              me.refreshCounter = 0;
+
+              // Reload the page
+              webview.reload();
+            }
+          }
         });
       }
     });
