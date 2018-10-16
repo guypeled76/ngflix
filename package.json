@@ -27,6 +27,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "electron-pack": "build -c.extraMetadata.main=build/main.js",
+    "electron-publish": "build -c.extraMetadata.main=build/main.js -p always",
     "preelectron-pack": "yarn build"
   },
   "build": {
@@ -35,6 +36,11 @@
       "build/**/*",
       "node_modules/**/*"
     ],
+    "publish": [{
+      "provider": "github",
+      "owner": "guypeled76",
+      "repo": "ngflix"
+    }],
     "directories": {
       "buildResources": "assets"
     }
