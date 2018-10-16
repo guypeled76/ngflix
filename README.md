@@ -1,7 +1,7 @@
 ## References
 
 [Tutorial](https://medium.freecodecamp.org/heres-how-i-created-a-markdown-app-with-electron-and-react-1e902f8601ca)
-
+[autoupdate](https://github.com/iffy/electron-updater-example)
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
