@@ -216,7 +216,7 @@ function logonNetflix() {
  * Shows the about window
  */
 function showAbout() {
-  showMessage("About", "temp");
+  showMessage("About", "Version:" + app.getVersion());
 }
 
 /**
