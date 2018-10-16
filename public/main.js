@@ -106,7 +106,7 @@ let monitorMode = 'mail_task';
 // Handle the preferences editing
 handleWindowMessage('enable:monitor', function (mode) {
   monitorMode = mode;
-  enableMonitoring();
+  enableMonitoring(true);
 });
 
 
@@ -282,9 +282,9 @@ function startMonitoring() {
   ]);
 }
 
-function enableMonitoring() {
+function enableMonitoring(immediate) {
   clearTimeout(checkHandle);
-  checkHandle = setTimeout(probeNetflix, 10000);
+  checkHandle = setTimeout(probeNetflix, immediate ? 10 : 10000);
   setStatusBar("Started task monitoring.");
 }
 
