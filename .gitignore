@@ -12,8 +12,6 @@
 # dist
 /dist
 
-/docs
-
 # misc
 .DS_Store
 .env.local
