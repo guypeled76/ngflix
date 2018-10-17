@@ -105,6 +105,8 @@ let monitorMode = 'mail_task';
 
 // Handle the preferences editing
 handleWindowMessage('enable:monitor', function (mode) {
+
+  setStatusBar("Starting 'Get Task' monitoring.");
   monitorMode = mode;
   enableMonitoring(true);
 });
@@ -124,14 +126,10 @@ handleWindowMessage("gettask:netflixResult" , function (success) {
 
 // Handle the found task message
 handleWindowMessage("found:getTask", function (success) {
-  if (success) {
-
-    // Get preferences
+  if (success) {    
     let preferences = store.get('preferences');
     if (preferences) {
-
       clearInterval(checkHandle);
-
       switch (monitorMode) {
         case 'get_task':
           getTaskNetflix();
@@ -150,16 +148,14 @@ handleWindowMessage("found:getTask", function (success) {
           });
           break;
       }
-
     } else {
       showMessage("Failure", "Failed to send mail! [reason=preferences]", [
         { text: 'Retry', action: "found:getTask", args: success },
         { text: 'Close' }
       ]);
     }
-
   } else {
-    setStatusBar("Get task was not found.")
+    setStatusBar("'Get Task' was not found.")
     enableMonitoring();
   }
 });
@@ -254,6 +250,7 @@ function getTaskNetflix() {
  * Probe the netflix site
  */
 function probeNetflix() {
+  setStatusBar("Checking for 'Get Task' button.");
   sendWindowMessage("probe:netflix");
 }
 
@@ -284,8 +281,7 @@ function startMonitoring() {
 
 function enableMonitoring(immediate) {
   clearTimeout(checkHandle);
-  checkHandle = setTimeout(probeNetflix, immediate ? 10 : 10000);
-  setStatusBar("Started task monitoring.");
+  checkHandle = setTimeout(probeNetflix, immediate ? 10 : 10000);  
 }
 
 /**
